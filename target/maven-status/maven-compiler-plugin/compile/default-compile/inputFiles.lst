@@ -1,0 +1,12 @@
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/GutensearchApplication.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/dto/GutendexAutor.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/dto/GutendexBookData.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/dto/GutendexResponse.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/model/Autor.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/model/Livro.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/repository/AutorRepository.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/repository/LivroRepository.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/services/EstatisticasService.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/services/GutendexService.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/services/Literatura.java
+/home/kai/Git/Gutensearch/src/main/java/com/logos/gutensearch/ui/Principal.java
