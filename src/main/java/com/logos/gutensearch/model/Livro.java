@@ -17,18 +17,10 @@ public class Livro {
     private String titulo;
     private String idioma;
     private Integer downloads;
+    private String DataPublicacao;
+    private String isbn;
     
     @ManyToOne
     private Autor autor;
-
-    public Object getDataPublicacao() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getDataPublicacao'");
-    }
-
-    public Object getIsbn() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIsbn'");
-    }
 
 }

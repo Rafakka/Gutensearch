@@ -55,5 +55,9 @@ public class Literatura {
         throw new UnsupportedOperationException("Unimplemented method 'ListarAutoresRegistrados'");
     }
 
+    public List<Autor> listarAutoresVivosNoAno(int ano) {
+    return autorRepository.findByAnoNascimentoLessThanEqualAndAnoFalecimentoGreaterThanOrAnoFalecimentoIsNull(ano, ano);
+    }
+
 }
 
