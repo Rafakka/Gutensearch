@@ -26,7 +26,10 @@ public interface LivroRepository extends JpaRepository<Livro, Long> {
     @Query("SELECT l FROM Livro l WHERE l.genero = ?1")
     List<Livro> findByGenero(String genero);
 
-    double mediaDownloadLivros();
-
     Map<String, Integer> livrosPorIdioma();
+
+    @Query("SELECT AVG(l.downloads) FROM Livro l")
+    Double mediaDownloadLivros();
+
+    
 }
