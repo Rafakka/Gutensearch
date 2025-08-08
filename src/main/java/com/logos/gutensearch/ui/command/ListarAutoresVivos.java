@@ -3,9 +3,7 @@ package com.logos.gutensearch.ui.command;
 
 import java.util.List;
 import java.util.Scanner;
-
 import org.springframework.stereotype.Component;
-
 import com.logos.gutensearch.model.Autor;
 import com.logos.gutensearch.services.Literatura;
 
@@ -15,10 +13,10 @@ public class ListarAutoresVivos implements MenuCommand {
     private final Scanner scanner;
     private final Literatura literatura;
 
-    public ListarAutoresVivos(Scanner scanner, Literatura literatura) {
+    public ListarAutoresVivos(Literatura literatura, Scanner scanner) {
     this.scanner = scanner;
     this.literatura = literatura;
-}
+    }
 
     @Override
     public void executar() {
