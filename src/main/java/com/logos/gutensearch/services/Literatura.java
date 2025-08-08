@@ -3,8 +3,10 @@ package com.logos.gutensearch.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import com.logos.gutensearch.model.Autor;
 import com.logos.gutensearch.model.Livro;
@@ -70,12 +72,23 @@ public class Literatura {
         return livroRepository.mediaDownloadLivros();
     }
 
-    Autor autoComMaisLivros() {
-        return autorRepository.autoComMaisLivros();
+
+    public Autor autorComMaisLivros() {
+    List<Autor> autores = autorRepository.autorComMaisLivros(PageRequest.of(0, 1));
+    return autores.isEmpty() ? null : autores.get(0);
     }
 
-    Map <String, Integer> livrosPorIdioma() {
-        return livroRepository.livrosPorIdioma();
+    public Map<String, Integer> livrosPorIdioma() {
+        List<Object[]> resultados = livroRepository.livrosPorIdioma();
+        return resultados.stream()
+            .collect(Collectors.toMap(
+                r -> (String) r[0],
+                r -> ((Long) r[1]).intValue()
+            ));
+    }
+
+    public List<Livro> top10Livros() {
+        return livroRepository.top10Livros(PageRequest.of(0, 10));
     }
 }
 
