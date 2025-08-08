@@ -1,6 +1,7 @@
 package com.logos.gutensearch.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,5 +58,24 @@ public class Literatura {
     return autorRepository.findByAnoNascimentoLessThanEqualAndAnoFalecimentoGreaterThanOrAnoFalecimentoIsNull(ano, ano);
     }
 
+    public List<String> listarIdiomasLivros() {
+        return livroRepository.findDistinctIdiomas();
+    }
+
+    int contarLivros() {
+        return (int) livroRepository.count();
+    }
+
+    double mediaDownloadLivros() {
+        return livroRepository.mediaDownloadLivros();
+    }
+
+    Autor autoComMaisLivros() {
+        return autorRepository.autoComMaisLivros();
+    }
+
+    Map <String, Integer> livrosPorIdioma() {
+        return livroRepository.livrosPorIdioma();
+    }
 }
 
