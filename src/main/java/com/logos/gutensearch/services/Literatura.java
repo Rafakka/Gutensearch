@@ -45,14 +45,12 @@ public class Literatura {
         return livroRepository.findAll();
     }
 
-    public void BuscarAutores(String nome) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'BuscarAutores'");
+    public Optional<Autor> BuscarAutores(String nome) {
+        return autorRepository.findByNome(nome);
     }
 
-    public List<Autor> ListarAutoresRegistrados() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'ListarAutoresRegistrados'");
+    public List<Autor> listarAutoresRegistrados() {
+        return autorRepository.findAll();
     }
 
     public List<Autor> listarAutoresVivosNoAno(int ano) {

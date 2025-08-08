@@ -14,7 +14,7 @@ public class ListarAutoresReg implements MenuCommand {
 
     @Override
     public void executar() {
-            List<Autor> autores = literatura.ListarAutoresRegistrados();
+            List<Autor> autores = literatura.listarAutoresRegistrados();
 
         if (autores.isEmpty()) {
             System.out.println("Nenhum Autor registrado.");
