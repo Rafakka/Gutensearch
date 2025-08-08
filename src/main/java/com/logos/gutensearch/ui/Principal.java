@@ -39,6 +39,7 @@ public class Principal{
         System.out.println("0 - Sair");
         System.out.print("Escolha uma opção: ");
         int opcao = scanner.nextInt();
+        scanner.nextLine();
         if (opcao == 0) {
             System.out.println("Saindo...");
             break;
@@ -49,7 +50,7 @@ public class Principal{
         if (comando != null){
             comando.executar();
         } else {
-            System.out.printf("Opção Invalida");
+            System.out.println("Opção Invalida, tente novamente");
             }
         }
     }

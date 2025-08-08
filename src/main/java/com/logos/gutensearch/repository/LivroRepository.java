@@ -11,11 +11,8 @@ import com.logos.gutensearch.model.Livro;
 
 public interface LivroRepository extends JpaRepository<Livro, Long> {
 
+    @Query("SELECT l FROM Livro l WHERE l.titulo = :titulo")
     Optional<Livro> findByTitulo(String titulo);
-
-    List<Livro> findByIdioma(String idioma);
-
-    Object estatisticas();
 
     @Query("SELECT DISTINCT l.idioma FROM Livro l")
     List<String> findDistinctIdiomas();
