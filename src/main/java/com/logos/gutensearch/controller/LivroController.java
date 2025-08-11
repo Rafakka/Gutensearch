@@ -30,7 +30,7 @@ public class LivroController {
 
     @GetMapping("/buscar")
     public ResponseEntity<List<Livro>> buscarLivros(@RequestParam String titulo) {
-        List<Livro> livros = gutendexService.buscarLivros(titulo);
+        List<Livro> livros = gutendexService.buscarESalvarLivros(titulo);
         return ResponseEntity.ok(livros);
     }
 

@@ -25,7 +25,7 @@ public class Literatura {
     private AutorRepository autorRepository;
     
     public void buscarELancarLivro(String titulo) {
-    gutendexService.buscarLivros(titulo);
+    gutendexService.buscarESalvarLivros(titulo);
     }
 
     public List<Livro> listarLivrosReg() {
