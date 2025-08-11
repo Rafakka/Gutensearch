@@ -2,4 +2,8 @@ package com.logos.gutensearch.dto;
 
 import java.util.List;
 
-public record GutendexResponse(List<GutendexBookData> results) {}
+public record GutendexResponse(
+    int count,
+    String next,
+    String previous,
+    List<GutendexBookData> results) {}

@@ -25,23 +25,7 @@ public class Literatura {
     private AutorRepository autorRepository;
     
     public void buscarELancarLivro(String titulo) {
-        List<Livro> livros = gutendexService.buscarLivros(titulo);
-        
-        livros.forEach(livro -> {
-            Optional<Livro> livroExistente = livroRepository.findByTitulo(livro.getTitulo());
-            if (livroExistente.isEmpty()) {
-                Autor autor = livro.getAutor();
-                Optional<Autor> autorExistente = autorRepository.findByNome(autor.getNome());
-                
-                if (autorExistente.isPresent()) {
-                    livro.setAutor(autorExistente.get());
-                } else {
-                    autorRepository.save(autor);
-                }
-                
-                livroRepository.save(livro);
-            }
-        });
+    gutendexService.buscarLivros(titulo);
     }
 
     public List<Livro> listarLivrosReg() {
@@ -64,14 +48,13 @@ public class Literatura {
         return livroRepository.findDistinctIdiomas();
     }
 
-    int contarLivros() {
+    public int contarLivros() {
         return (int) livroRepository.count();
     }
 
-    double mediaDownloadLivros() {
+    public double mediaDownloadLivros() {
         return livroRepository.mediaDownloadLivros();
     }
-
 
     public Autor autorComMaisLivros() {
     List<Autor> autores = autorRepository.autorComMaisLivros(PageRequest.of(0, 1));
@@ -88,7 +71,6 @@ public class Literatura {
     }
 
     public List<Livro> top10Livros() {
-        return livroRepository.top10Livros(PageRequest.of(0, 10));
+        return livroRepository.findTop10ByOrderByDownloadsDesc();
     }
 }
-

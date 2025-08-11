@@ -1,70 +1,86 @@
 package com.logos.gutensearch.services;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import com.logos.gutensearch.dto.GutendexAutor;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import com.logos.gutensearch.dto.GutendexBookData;
 import com.logos.gutensearch.dto.GutendexResponse;
 import com.logos.gutensearch.model.Autor;
 import com.logos.gutensearch.model.Livro;
+import com.logos.gutensearch.repository.AutorRepository;
+import com.logos.gutensearch.repository.LivroRepository;
 
 @Service
 public class GutendexService {
 
-    private static final String API_URL = "https://gutendex.com/books/";
-    private static final String DEFAULT_LANGUAGE = "desconhecido";
-    private static final String DEFAULT_TITLE = "Sem título";
-    private static final int DEFAULT_DOWNLOADS = 0;
+    private final WebClient webClient;
+    private final LivroRepository livroRepository;
+    private final AutorRepository autorRepository;
 
-    private final RestTemplate restTemplate;
-
-    public GutendexService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public GutendexService(LivroRepository livroRepository, AutorRepository autorRepository) {
+        this.webClient = WebClient.create("https://gutendex.com");
+        this.livroRepository = livroRepository;
+        this.autorRepository = autorRepository;
     }
 
-    public List<Livro> buscarLivros(String titulo) {
-        if (titulo == null || titulo.isBlank()) {
-            throw new IllegalArgumentException("O título não pode ser vazio");
-        }
+    private Livro mapearParaLivro(GutendexBookData bookData) {
+    Livro livro = new Livro();
 
-        String url = API_URL + "?search=" + titulo.replace(" ", "%20");
-        GutendexResponse response = restTemplate.getForObject(url, GutendexResponse.class);
+    livro.setTitulo(bookData.title());
 
-        if (response == null || response.results() == null) {
-            return List.of();
-        }
-
-        return response.results().stream()
-            .filter(Objects::nonNull)
-            .map(this::converterDados)
-            .collect(Collectors.toList());
+    if (bookData.languages() != null && !bookData.languages().isEmpty()) {
+        livro.setIdioma(bookData.languages().get(0));
     }
 
-     private Livro converterDados(GutendexBookData dados) {
-        Objects.requireNonNull(dados, "Dados do livro não podem ser nulos");
+    livro.setDownloads(bookData.download_count());
+    livro.setDataPublicacao(null);
+    Autor autor = null;
+    if (bookData.authors() != null && !bookData.authors().isEmpty()) {
+        String nomeAutor = bookData.authors().get(0).name();
+        autor = autorRepository.findByNome(nomeAutor)
+                .orElseGet(() -> {
+                    Autor novoAutor = new Autor();
+                    novoAutor.setNome(nomeAutor);
+                    return autorRepository.save(novoAutor);
+                });
+    }
+    livro.setAutor(autor);
 
-        Autor autor = new Autor();
-        if (dados.authors() != null && !dados.authors().isEmpty()) {
-            GutendexAutor autorApi = dados.authors().get(0);
-            if (autorApi != null) {
-                autor.setNome(autorApi.name() != null ? autorApi.name() : "Autor desconhecido");
-                autor.setAnoNascimento(autorApi.birth_year());
-                autor.setAnoFalecimento(autorApi.death_year());
+    return livro;
+    }
+
+    public List<Livro> buscarLivros(String termoBusca) {
+        GutendexResponse response = webClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/books")
+                        .queryParam("search", termoBusca)
+                        .build())
+                .retrieve()
+                .bodyToMono(GutendexResponse.class)
+                .block();
+
+        List<Livro> livrosSalvos = new ArrayList<>();
+
+        if (response != null && response.results() != null) {
+            for (GutendexBookData bookData : response.results()) {
+            Livro livro = mapearParaLivro(bookData);
+
+            if (livro.getAutor() != null) {
+                boolean existe = livroRepository
+                        .findByTituloAndAutorNome(
+                            livro.getTitulo(), 
+                            livro.getAutor().getNome()
+                        )
+                        .isPresent();
+
+                if (!existe) {
+                    livrosSalvos.add(livroRepository.save(livro));
+                    }
+                }
             }
         }
-
-        Livro livro = new Livro();
-        livro.setTitulo(dados.title() != null ? dados.title() : DEFAULT_TITLE);
-        livro.setIdioma(dados.languages() != null && !dados.languages().isEmpty() 
-            ? dados.languages().get(0) 
-            : DEFAULT_LANGUAGE);
-        livro.setDownloads(dados.download_count() != null ? dados.download_count() : DEFAULT_DOWNLOADS);
-        livro.setAutor(autor);
-
-        return livro;
+        return livrosSalvos;
     }
 }
-    
