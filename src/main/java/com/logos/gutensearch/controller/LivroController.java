@@ -23,6 +23,12 @@ public class LivroController {
         this.literaturaService = literaturaService;
     }
 
+    @GetMapping("/listar")
+    public ResponseEntity<List<Livro>> listarLivrosReg() {
+        List<Livro> livros = literaturaService.listarLivrosReg();
+        return ResponseEntity.ok(livros);
+    }
+
     @GetMapping("/filtrar")
     public ResponseEntity<List<Livro>> filtrarLivros(
         @RequestParam(required = false) String titulo,
