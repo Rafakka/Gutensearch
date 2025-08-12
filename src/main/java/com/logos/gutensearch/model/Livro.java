@@ -1,6 +1,8 @@
 
 package com.logos.gutensearch.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +30,7 @@ public class Livro {
     private String genero;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "autor_id")
     private Autor autor;
 }

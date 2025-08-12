@@ -1,47 +1,62 @@
 package com.logos.gutensearch.services;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.logos.gutensearch.model.Autor;
 import com.logos.gutensearch.model.Livro;
 import com.logos.gutensearch.repository.AutorRepository;
 import com.logos.gutensearch.repository.LivroRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class Literatura {
-    @Autowired
-    private GutendexService gutendexService;
+
+    private final LivroRepository livroRepository;
+    private final AutorRepository autorRepository;
+
+    public Literatura(LivroRepository livroRepository, AutorRepository autorRepository) {
+        this.livroRepository = livroRepository;
+        this.autorRepository = autorRepository;
+    }
+
     
-    @Autowired
-    private LivroRepository livroRepository;
-    
-    @Autowired
-    private AutorRepository autorRepository;
-    
-    public void buscarELancarLivro(String titulo) {
-    gutendexService.buscarESalvarLivros(titulo);
+    public List<Livro> filtrarLivros(String titulo, String idioma, String genero) {
+
+        if (titulo != null && !titulo.isEmpty()) {
+            return livroRepository.findByTituloContainingIgnoreCase(titulo);
+        }
+        return livroRepository.findAll();
+    }
+
+    @Transactional
+    public Livro buscarELancarLivro(String titulo) {
+        Optional<Livro> livroOpt = livroRepository.findByTitulo(titulo);
+    if (livroOpt.isPresent()) {
+        return livroOpt.get();
+    } else {
+        Livro novoLivro = new Livro();
+        novoLivro.setTitulo(titulo);
+        return livroRepository.save(novoLivro);
+    }
     }
 
     public List<Livro> listarLivrosReg() {
         return livroRepository.findAll();
     }
 
-    public Optional<Autor> BuscarAutores(String nome) {
-        return autorRepository.findByNome(nome);
-    }
-
     public List<Autor> listarAutoresRegistrados() {
         return autorRepository.findAll();
     }
 
+    public Optional<Autor> BuscarAutores(String nome) {
+        return autorRepository.findByNome(nome);
+    }
+
     public List<Autor> listarAutoresVivosNoAno(int ano) {
-    return autorRepository.findByAnoNascimentoLessThanEqualAndAnoFalecimentoGreaterThanOrAnoFalecimentoIsNull(ano, ano);
+        return autorRepository.findByAnoFalecimentoIsNullOrAnoFalecimentoAfter(ano);
     }
 
     public List<String> listarIdiomasLivros() {
@@ -52,25 +67,16 @@ public class Literatura {
         return (int) livroRepository.count();
     }
 
-    public double mediaDownloadLivros() {
+    public Double mediaDownloadLivros() {
         return livroRepository.mediaDownloadLivros();
-    }
-
-    public Autor autorComMaisLivros() {
-    List<Autor> autores = autorRepository.autorComMaisLivros(PageRequest.of(0, 1));
-    return autores.isEmpty() ? null : autores.get(0);
-    }
-
-    public Map<String, Integer> livrosPorIdioma() {
-        List<Object[]> resultados = livroRepository.livrosPorIdioma();
-        return resultados.stream()
-            .collect(Collectors.toMap(
-                r -> (String) r[0],
-                r -> ((Long) r[1]).intValue()
-            ));
     }
 
     public List<Livro> top10Livros() {
         return livroRepository.findTop10ByOrderByDownloadsDesc();
+    }
+
+
+    public List<Autor> filtrarAutoresPorNome(String nome) {
+        return autorRepository.findByNomeContainingIgnoreCase(nome);
     }
 }

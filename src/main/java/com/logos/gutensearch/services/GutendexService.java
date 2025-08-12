@@ -75,7 +75,6 @@ public class GutendexService {
 
         if (response == null) return Collections.emptyList();
 
-        // Mapear e salvar cada livro no banco
         List<Livro> livros = response.results().stream()
             .map(this::mapearParaLivro)
             .map(livroRepository::save)
