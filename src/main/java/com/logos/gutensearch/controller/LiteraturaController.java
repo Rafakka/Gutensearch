@@ -1,12 +1,10 @@
 package com.logos.gutensearch.controller;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.logos.gutensearch.model.Autor;
 import com.logos.gutensearch.model.Livro;
 import com.logos.gutensearch.services.Literatura;
 
@@ -24,25 +22,6 @@ public class LiteraturaController {
     public ResponseEntity<Livro> buscarELancarLivro(@RequestParam String titulo) {
         Livro livro = literaturaService.buscarELancarLivro(titulo);
         return ResponseEntity.ok(livro);
-    }
-
-    @GetMapping("/livros")
-    public ResponseEntity<List<Livro>> listarLivrosReg() {
-        List<Livro> livros = literaturaService.listarLivrosReg();
-        return ResponseEntity.ok(livros);
-    }
-
-    @GetMapping("/autores")
-    public ResponseEntity<List<Autor>> listarAutoresRegistrados() {
-        List<Autor> autores = literaturaService.listarAutoresRegistrados();
-        return ResponseEntity.ok(autores);
-    }
-
-    @GetMapping("/autor/buscar")
-    public ResponseEntity<Autor> buscarAutorPorNome(@RequestParam String nome) {
-        Optional<Autor> autor = literaturaService.BuscarAutores(nome);
-        return autor.map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/livros/idiomas")
@@ -69,9 +48,5 @@ public class LiteraturaController {
         return ResponseEntity.ok(livros);
     }
 
-    @GetMapping("/autores/filtrar-nome-parcial")
-    public ResponseEntity<List<Autor>> filtrarAutoresPorNome(@RequestParam String nome) {
-        List<Autor> autores = literaturaService.filtrarAutoresPorNome(nome);
-        return ResponseEntity.ok(autores);
-    }
+
 }
