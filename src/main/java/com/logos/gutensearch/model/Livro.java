@@ -29,7 +29,7 @@ public class Livro {
 
     private String genero;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JoinColumn(name = "autor_id")
     private Autor autor;
