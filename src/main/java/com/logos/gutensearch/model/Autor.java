@@ -28,8 +28,8 @@ public class Autor {
     private String nacionalidade;
     private String biografia;
     private String generos;
-    private String dataNascimento;
-    private String dataFalecimento;
+    private Integer dataNascimento;
+    private Integer dataFalecimento;
 
     @ElementCollection
     private List<String> obras;

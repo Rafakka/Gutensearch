@@ -3,6 +3,8 @@ package com.logos.gutensearch.ui;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import com.logos.gutensearch.services.Literatura;
 import com.logos.gutensearch.ui.command.BuscarLivro;
@@ -14,14 +16,20 @@ import com.logos.gutensearch.ui.command.MenuCommand;
 
 
 @Component
-public class Principal{
+public class Principal implements CommandLineRunner{
 
     private final Literatura literatura;
-
+    private final Scanner scanner;
+    
     public Principal(Literatura literatura) {
         this.literatura = literatura;
+        this.scanner = new Scanner(System.in);
     }
-    Scanner scanner = new Scanner(System.in);
+
+    @Override
+    public void run (String... args) throws Exception {
+        exibeMenu();
+    }
 
     public void exibeMenu() {
         Map<Integer, MenuCommand> comandos = new LinkedHashMap<>();
@@ -31,27 +39,27 @@ public class Principal{
         comandos.put(4, new ListarLivrosIdiomas(literatura));
         comandos.put(5, new ListarLivrosReg(literatura));
 
-    while (true) {
-        System.out.println("\nMenu");
-        for (var entry : comandos.entrySet()) {
-            System.out.printf("%d - %s%n", entry.getKey(), entry.getValue().getNome());    
-        }
-        System.out.println("0 - Sair");
-        System.out.print("Escolha uma opção: ");
-        int opcao = scanner.nextInt();
-        scanner.nextLine();
-        if (opcao == 0) {
-            System.out.println("Saindo...");
-            break;
-        }
+        while (true) {
+            System.out.println("\nMenu");
+            for (var entry : comandos.entrySet()) {
+                System.out.printf("%d - %s%n", entry.getKey(), entry.getValue().getNome());    
+            }
+            System.out.println("0 - Sair");
+            System.out.print("Escolha uma opção: ");
+            int opcao = scanner.nextInt();
+            scanner.nextLine();
+                if (opcao == 0) {
+                    System.out.println("Saindo...");
+                    break;
+                }
 
-    MenuCommand comando = comandos.get(opcao);
+        MenuCommand comando = comandos.get(opcao);
 
-        if (comando != null){
-            comando.executar();
-        } else {
-            System.out.println("Opção Invalida, tente novamente");
+            if (comando != null){
+                comando.executar();
+            } else {
+                System.out.println("Opção Invalida, tente novamente");
+                }
             }
         }
     }
-}

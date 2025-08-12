@@ -1,6 +1,5 @@
 package com.logos.gutensearch.services;
 
-import java.util.Collections;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -45,7 +44,6 @@ public class GutendexService {
         }
 
         livro.setDownloads(bookData.download_count());
-        livro.setDataPublicacao(null);
 
         Autor autor = null;
         if (bookData.authors() != null && !bookData.authors().isEmpty()) {
@@ -64,22 +62,27 @@ public class GutendexService {
 
     public List<Livro> buscarESalvarLivros(String titulo) {
         GutendexResponse response = webClient
-                .get()
-                .uri(uriBuilder -> uriBuilder.path("/books/")
-                    .queryParam("search", titulo)
-                    .build())
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(GutendexResponse.class)
-                .block();
+            .get()
+            .uri(uriBuilder -> uriBuilder.path("/books")
+                .queryParam("search", titulo)
+                .build())
+            .accept(MediaType.APPLICATION_JSON)
+            .retrieve()
+            .bodyToMono(GutendexResponse.class)
+            .block();
 
-        if (response == null) return Collections.emptyList();
+        if (response != null && response.results() != null && !response.results().isEmpty()) {
+            return response.results().stream()
+                .map(this::mapearParaLivro)
+                .map(livroRepository::save)
+                .toList();
+        }
 
-        List<Livro> livros = response.results().stream()
-            .map(this::mapearParaLivro)
-            .map(livroRepository::save)
-            .toList();
+        List<Livro> livrosNoBanco = livroRepository.findByTituloContainingIgnoreCase(titulo);
+        if (!livrosNoBanco.isEmpty()) {
+            return livrosNoBanco;
+        }
 
-        return livros;
+        throw new RuntimeException("Livro não encontrado");
     }
 }

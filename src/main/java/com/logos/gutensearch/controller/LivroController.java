@@ -29,6 +29,36 @@ public class LivroController {
         return ResponseEntity.ok(livros);
     }
 
+    @GetMapping("/livros/buscar-elancar")
+    public ResponseEntity<Livro> buscarELancarLivro(@RequestParam String titulo) {
+        Livro livro = literaturaService.buscarELancarLivro(titulo);
+        return ResponseEntity.ok(livro);
+    }
+
+    @GetMapping("/estatisticas/idiomas")
+    public ResponseEntity<List<String>> listarIdiomasLivros() {
+        List<String> idiomas = literaturaService.listarIdiomasLivros();
+        return ResponseEntity.ok(idiomas);
+    }
+
+    @GetMapping("/estatisticas/contar")
+    public ResponseEntity<Integer> contarLivros() {
+        int count = literaturaService.contarLivros();
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/estatisticas/media-downloads")
+    public ResponseEntity<Double> mediaDownloadLivros() {
+        Double media = literaturaService.mediaDownloadLivros();
+        return ResponseEntity.ok(media);
+    }
+
+    @GetMapping("/estatisticas/top10")
+    public ResponseEntity<List<Livro>> top10Livros() {
+        List<Livro> livros = literaturaService.top10Livros();
+        return ResponseEntity.ok(livros);
+    }
+
     @GetMapping("/filtrar")
     public ResponseEntity<List<Livro>> filtrarLivros(
         @RequestParam(required = false) String titulo,
