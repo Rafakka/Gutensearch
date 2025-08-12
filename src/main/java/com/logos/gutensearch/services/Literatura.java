@@ -1,5 +1,6 @@
 package com.logos.gutensearch.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -34,22 +35,23 @@ public class Literatura {
     }
 
     @Transactional
-    public Livro buscarELancarLivro(String titulo) {
+    public List <Livro> buscarELancarLivro(String titulo) {
         List <Livro> resultadosApi = gutendexService.buscarESalvarLivros(titulo);
 
-        if (resultadosApi != null && !resultadosApi.isEmpty()) {
-            Livro livroApi = resultadosApi.get(0);
-            livroRepository.save(livroApi);
-            return livroApi;
+        if (!resultadosApi.isEmpty()){
+            return resultadosApi;
         } 
 
-        Optional<Livro> livroBanco = livroRepository.findFirstByTituloContainingIgnoreCase(titulo);
-        if (livroBanco.isPresent()){
-            return livroBanco.get();
+        List <Livro> livroBanco = livroRepository.findByTituloContainingIgnoreCase(titulo);
+        if (!livroBanco.isEmpty()){
+            return livroBanco;
         }
-        System.out.println("Livro não encontrado");
-        return null;
 
+        return Collections.emptyList();
+    }
+
+    public List<Autor> listarAutoresComObras(){
+        return autorRepository.findAllAutoresComObras();
     }
 
     public List<Livro> listarLivrosReg() {

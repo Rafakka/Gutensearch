@@ -1,5 +1,6 @@
 package com.logos.gutensearch.services;
 
+import java.util.Collections;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ public class GutendexService {
         this.autorRepository = autorRepository;
 
         this.webClient = WebClient.builder()
-            .baseUrl("https://gutendex.com/")
+            .baseUrl("http://localhost:8080")
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultHeader(HttpHeaders.USER_AGENT, "MeuAppCliente/1.0")
             .exchangeStrategies(ExchangeStrategies.builder()
@@ -44,6 +45,7 @@ public class GutendexService {
         }
 
         livro.setDownloads(bookData.download_count());
+        livro.setDataPublicacao(null);
 
         Autor autor = null;
         if (bookData.authors() != null && !bookData.authors().isEmpty()) {
@@ -63,7 +65,7 @@ public class GutendexService {
     public List<Livro> buscarESalvarLivros(String titulo) {
         GutendexResponse response = webClient
             .get()
-            .uri(uriBuilder -> uriBuilder.path("/books")
+            .uri(uriBuilder -> uriBuilder.path("/books/")
                 .queryParam("search", titulo)
                 .build())
             .accept(MediaType.APPLICATION_JSON)
@@ -71,18 +73,14 @@ public class GutendexService {
             .bodyToMono(GutendexResponse.class)
             .block();
 
-        if (response != null && response.results() != null && !response.results().isEmpty()) {
-            return response.results().stream()
-                .map(this::mapearParaLivro)
-                .map(livroRepository::save)
-                .toList();
+        if (response == null || response.results() == null || !response.results().isEmpty()) {
+            return Collections.emptyList();
         }
 
-        List<Livro> livrosNoBanco = livroRepository.findByTituloContainingIgnoreCase(titulo);
-        if (!livrosNoBanco.isEmpty()) {
-            return livrosNoBanco;
-        }
-
-        throw new RuntimeException("Livro não encontrado");
+        List<Livro> livros = response.results().stream()
+            .map(this::mapearParaLivro)
+            .map(livroRepository::save)
+            .toList();
+        return livros;
     }
 }

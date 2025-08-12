@@ -1,8 +1,11 @@
 package com.logos.gutensearch.ui.command;
 
+import java.util.List;
 import java.util.Scanner;
 
 import org.springframework.stereotype.Component;
+
+import com.logos.gutensearch.model.Livro;
 import com.logos.gutensearch.services.Literatura;
 
 @Component
@@ -20,7 +23,13 @@ public class BuscarLivro implements MenuCommand {
     public void executar() {
         System.out.println("Digite o título do livro:");
         String titulo = scanner.nextLine();
-        literatura.buscarELancarLivro(titulo);
+        List<Livro>livros = literatura.buscarELancarLivro(titulo);
+
+        if (livros.isEmpty()) {
+            System.out.println("Livro não encontrado");
+        } else {
+            livros.forEach(livro -> System.out.println(livro.getTitulo() + "-" + livro.getAutor().getNome()));
+        }
     }
 
     @Override

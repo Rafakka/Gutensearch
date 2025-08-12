@@ -31,8 +31,11 @@ public class LivroController {
 
     @GetMapping("/livros/buscar-elancar")
     public ResponseEntity<Livro> buscarELancarLivro(@RequestParam String titulo) {
-        Livro livro = literaturaService.buscarELancarLivro(titulo);
-        return ResponseEntity.ok(livro);
+        List<Livro> livros = literaturaService.buscarELancarLivro(titulo);
+        if (livros.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(livros.get(0));
     }
 
     @GetMapping("/estatisticas/idiomas")

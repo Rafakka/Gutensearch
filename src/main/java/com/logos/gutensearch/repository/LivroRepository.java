@@ -5,11 +5,13 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface LivroRepository extends JpaRepository<Livro, Long>, JpaSpecificationExecutor<Livro> {
 
     @EntityGraph(attributePaths = "autor")
@@ -33,6 +35,6 @@ public interface LivroRepository extends JpaRepository<Livro, Long>, JpaSpecific
     Optional<Livro> findFirstByTituloContainingIgnoreCase(String titulo);
 
     List<Livro> findByTituloContainingIgnoreCaseAndIdiomaContainingIgnoreCaseAndGeneroContainingIgnoreCase(
-            String titulo, String idioma, String genero);
+    String titulo, String idioma, String genero);
 
 }
